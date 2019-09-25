@@ -34,49 +34,48 @@ public class AdminItemAddController {
 	@SuppressWarnings("unchecked")
 	private static ItemDAO<Item> itemDAO = (ItemDAO<Item>)context.getBean("itemsDAO");
 
-	//新規登録画面フォーム
-	@RequestMapping(value="/admin/itemList/new",method=RequestMethod.GET)
-	public String regist(@ModelAttribute AdminModel adminModel,ItemModel itemModel,Model model)throws HttpSessionRequiredException{
-		if( adminModel.getAdmin().equals("admin")  && adminModel.getAdminpass().equals("pass") ){
-			model.addAttribute("itemModel",itemModel);
-			return "/admin/itemRegist";
-		}else{
-			throw new HttpSessionRequiredException(null);
-		}
+//新規登録画面フォーム
+@RequestMapping(value="/admin/itemList/new",method=RequestMethod.GET)
+public String regist(@ModelAttribute AdminModel adminModel,ItemModel itemModel,Model model)throws HttpSessionRequiredException{
+	if( adminModel.getAdmin().equals("admin")  && adminModel.getAdminpass().equals("pass") ){
+		model.addAttribute("itemModel",itemModel);
+		return "/admin/itemRegist";
+	}else{
+		throw new HttpSessionRequiredException(null);
 	}
+}
 
 //登録確認
-
 @RequestMapping(value="/admin/itemList/new",method=RequestMethod.POST,params="itemRegistConfirm")
 //@Validated @ModelAttribute AdminModel adminModel , @ModelAttribute ItemModel iModel, BindingResult result, Model model
 public String toConfirm(@ModelAttribute AdminModel adminModel ,@Validated(GroupOrder.class) @ModelAttribute ItemModel iModel,
 								BindingResult result,Model model)throws HttpSessionRequiredException{
 	if(result.hasErrors()){
-		  return "/admin/itemRegist";
+		return "/admin/itemRegist";
 	  }else if(adminModel.getAdmin().equals("admin")  && adminModel.getAdminpass().equals("pass")){
 			  Item item = new Item();
 			  //item.setStatus(3);
 			  BeanUtils.copyProperties(iModel,item);
-			  	if(itemDAO.InsertItem(item)){
-			  		return "redirect:/admin/itemRegistResult";
-			  	}else{
+			if(itemDAO.InsertItem(item)){
+			  	return "redirect:/admin/itemRegistResult";
+			  }else{
 			  		model.addAttribute("errorMessage","SQLエラーが発生しています");
 				return "/admin/itemRegist";
-			  	}
+			  }
 	  }else{
-				throw new HttpSessionRequiredException(null);
+		throw new HttpSessionRequiredException(null);
 		  }
 		}
 
-	//登録キャンセル
-	@RequestMapping(value="/admin/itemList/new",method=RequestMethod.POST,params="cancel")
-	public String toEdit(@ModelAttribute AdminModel adminModel,Model model)throws HttpSessionRequiredException{
-		if( adminModel.getAdmin().equals("admin")  && adminModel.getAdminpass().equals("pass") ){
-			return "redirect:/admin/itemList";
-		}else{
-			throw new HttpSessionRequiredException(null);
-		}
+//登録キャンセル
+@RequestMapping(value="/admin/itemList/new",method=RequestMethod.POST,params="cancel")
+public String toEdit(@ModelAttribute AdminModel adminModel,Model model)throws HttpSessionRequiredException{
+	if( adminModel.getAdmin().equals("admin")  && adminModel.getAdminpass().equals("pass") ){
+		return "redirect:/admin/itemList";
+	}else{
+		throw new HttpSessionRequiredException(null);
 	}
+}
 
 //新規登録
 @RequestMapping(value="/admin/itemList/new",method=RequestMethod.POST ,params="back")
